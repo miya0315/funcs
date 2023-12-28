@@ -178,3 +178,46 @@ func RegExpIdCard(idCard string) bool {
 
 	return false
 }
+
+// RegExpMoney 金额校验
+func RegExpMoney(str string, demic int) bool {
+
+	resStr := fmt.Sprintf("^(-)?[0-9]{1,10}(.[0-9]{1,%d})?$", demic)
+	reg := regexp.MustCompile(resStr)
+	return reg.MatchString(str)
+}
+
+// RegExpDate 日期格式校验
+func RegExpDate(str string) bool {
+	resStr := `^(20|19)\d{2}-((0[1-9])|(1[0-2]))-(([012][0-9])|(3[01]))$`
+	reg := regexp.MustCompile(resStr)
+	return reg.MatchString(str)
+}
+
+// RegExpDatetime 日期时间格式校验
+func RegExpDatetime(str string) bool {
+	resStr := `^(20|19)\d{2}-((0[1-9])|(1[0-2]))-(([012][0-9])|(3[01]))\s((([01]\d)|(2[0-3])):[0-5]\d:[0-5]\d)$`
+	reg := regexp.MustCompile(resStr)
+	return reg.MatchString(str)
+}
+
+// RegExpUrl url地址校验
+func RegExpUrl(str string) bool {
+	resStr := `^(http[s]?|ftp):\/\/([a-zA-Z0-9.-]+(:[a-zA-Z0-9.&%$-]+)*@)*((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}|([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(:[0-9]+)*(\/($|[a-zA-Z0-9.,?\'\\+&%$#=~_-]+))*$`
+	reg := regexp.MustCompile(resStr)
+	return reg.MatchString(str)
+}
+
+// RegExpIp ip地址校验
+func RegExpIp(str string) bool {
+	resStr := `^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$`
+	reg := regexp.MustCompile(resStr)
+	return reg.MatchString(str)
+}
+
+// RegExpHardPhone 固定电话号码校验(0512-12321321 | (0512)12321323)
+func RegExpHardPhone(str string) bool {
+	resStr := `^(\(\d{3,4}\)|\d{3,4}-|\s)?\d{7,14}$`
+	reg := regexp.MustCompile(resStr)
+	return reg.MatchString(str)
+}

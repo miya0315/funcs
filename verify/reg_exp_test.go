@@ -54,12 +54,33 @@ func TestRegExp(t *testing.T) {
 
 	// RegExpIdCard 身份证校验
 	str = "41282819910320527X"
-	log.Println("RegExpIdCard-18: ", str,RegExpIdCard(str))
+	log.Println("RegExpIdCard-18: ", str, RegExpIdCard(str))
 
 	str = "412828199103205279"
-	log.Println("RegExpIdCard-18: ", str,RegExpIdCard(str))
+	log.Println("RegExpIdCard-18: ", str, RegExpIdCard(str))
 
 	str = "412828910320527"
-	log.Println("RegExpIdCard-15: ", str,RegExpIdCard(str))
+	log.Println("RegExpIdCard-15: ", str, RegExpIdCard(str))
 
+	// RegExpDate 日期校验
+	str = "2023-10-10"
+	log.Println("RegExpDate: ", str, RegExpDate(str))
+
+	str = "2023-10-10 11:11:11"
+	log.Println("RegExpDatetime: ", str, RegExpDatetime(str))
+
+	// RegExpUrl url地址校验
+	str = "https://github.com/miya0315/funcs"
+	log.Println("RegExpUrl: ", str, RegExpUrl(str))
+
+	// RegExpIp ip地址校验
+	str = "127.0.0.1"
+	log.Println("RegExpIp: ", str, RegExpIp(str))
+
+	// RegExpHardPhone 固定号码校验：(0512-12321321 | (0512)12321323)
+	str = "0512-12321321"
+	log.Println("RegExpHardPhone: ", str, RegExpHardPhone(str))
+
+	str = "(0512)12321323"
+	log.Println("RegExpHardPhone: ", str, RegExpHardPhone(str))
 }

@@ -2,9 +2,12 @@ package create
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
+	"strconv"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/miya0315/funcs/changliang"
 )
@@ -44,3 +47,97 @@ func CreateRandomNumStr(length int) string {
 	return string(strByte)
 }
 
+// CreateMoneyToChina 数字金额转化为中文
+func CreateMoneyToChina(str string) string {
+	var (
+		digits     []string
+		radices    []string
+		bigRadices []string
+		decimals   []string
+		cnDollar   string
+		cnInteger  string
+		outStr     string
+		intStr     string
+		floatStr   string
+	)
+	digits = []string{"零", "壹", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖"}
+	radices = []string{"", "拾", "佰", "仟", "万", "亿"}
+	bigRadices = []string{"", "万", "亿", "万"}
+	decimals = []string{"角", "分", "厘"}
+	cnDollar = "元"
+	cnInteger = "整"
+
+	money := strings.Split(str, ".")
+	intStr = money[0]
+	if len(money) > 1 {
+		floatStr = money[1]
+	}
+	log.Println("money[]:", money)
+	if intStr != "0" {
+		intNumLen := len(intStr)
+		zeroCount := 0
+
+		for i := 0; i < intNumLen; i++ {
+			p := intNumLen - i - 1
+			d, _ := strconv.Atoi(string(intStr[i]))
+
+			quotient := p / 4
+			modulus := p % 4
+
+			if d == 0 {
+				zeroCount++
+			} else {
+				if zeroCount > 0 {
+					outStr += bigRadices[0]
+				}
+				zeroCount = 0
+				outStr += digits[d] + radices[modulus]
+			}
+
+			if modulus == 0 && zeroCount < 4 {
+				outStr += bigRadices[quotient]
+				zeroCount = 0
+			}
+
+		}
+		outStr += cnDollar
+	}
+
+	if floatStr != "" && floatStr != "0" {
+		floadLen := len(floatStr)
+		for i := 0; i < floadLen; i++ {
+			d, _ := strconv.Atoi(string(floatStr[i]))
+			if d != 0 {
+				outStr += digits[d] + decimals[i]
+			}
+		}
+	}
+
+	if outStr == "" {
+		outStr = digits[0] + cnDollar
+	}
+
+	if floatStr != "" {
+		d, _ := strconv.Atoi(string(floatStr[0]))
+		if d != 0 {
+			outStr += cnInteger
+		}
+	}
+
+	return outStr
+}
+
+// CreateNewStrWithStar 替换字符串中间1/3字符串为*
+func CreateNewStrWithStar(str, symbol string) string {
+	if symbol == "" {
+		symbol = "*"
+	}
+
+	strLen := utf8.RuneCountInString(str)
+	starLen := int(strLen / 3)
+	strSlice := []rune(str)
+	star := strings.Repeat(symbol, starLen+1)
+
+	log.Println("====", string(strSlice[:starLen]), star, starLen, strLen)
+	return string(strSlice[:starLen]) + star + string(strSlice[2*starLen:])
+}
