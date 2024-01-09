@@ -10,6 +10,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/miya0315/funcs/changliang"
+	"github.com/xuri/excelize/v2"
 )
 
 // CreateUniqueOrderNo 创建唯一Id:长度 len(prefix)+27
@@ -138,6 +139,30 @@ func CreateNewStrWithStar(str, symbol string) string {
 	strSlice := []rune(str)
 	star := strings.Repeat(symbol, starLen+1)
 
-	log.Println("====", string(strSlice[:starLen]), star, starLen, strLen)
 	return string(strSlice[:starLen]) + star + string(strSlice[2*starLen:])
+}
+
+// CreateExcelFile 导出excel
+func CreateExcelFile(fileName string, data [][]interface{}) error {
+	f := excelize.NewFile()
+
+	// 创建一个新的工作表
+	index, _ := f.NewSheet("Sheet1")
+
+	// 为工作表设置单元格的值
+	for i, row := range data {
+		for j, value := range row {
+			cell, _ := excelize.CoordinatesToCellName(j+1, i+1)
+			f.SetCellValue("Sheet1", cell, value)
+		}
+	}
+
+	// 设置工作表为活动状态
+	f.SetActiveSheet(index)
+
+	// 保存文件
+	if err := f.SaveAs(fileName); err != nil {
+		return err
+	}
+	return nil
 }

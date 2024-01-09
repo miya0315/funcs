@@ -3,6 +3,7 @@ package create
 import (
 	"log"
 	"testing"
+
 )
 
 func TestCreate(t *testing.T) {
@@ -35,5 +36,17 @@ func TestCreate(t *testing.T) {
 
 	str := "生成指定随机数字2131321321地方："
 	log.Println("CreateNewStrWithStar:", str, CreateNewStrWithStar(str, ""))
+
+}
+
+func TestExport(t *testing.T) {
+	data := [][]interface{}{
+		{"ID", "Name", "Email"}, // 标题头
+		{1, "John Doe", "john@example.com"},
+		{2, "Jane Smith", "jane@example.com"},
+		// 更多数据...
+	}
+	err:= CreateExcelFile("../local_test/export.xlsx", data)
+	log.Println("CreateExcelFile:", err)
 
 }
