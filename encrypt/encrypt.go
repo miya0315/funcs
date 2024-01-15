@@ -13,7 +13,9 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
+	"math"
 	"os"
+	"strings"
 )
 
 // ECBDecrypt ECB模式解密
@@ -121,6 +123,21 @@ func Base64Decode(input string) (string, error) {
 	return string(str), nil
 }
 
+// Base64Encode base64加密
+func Base64UrlEncode(input string) string {
+	return base64.URLEncoding.EncodeToString([]byte(input))
+}
+
+// Base64Decode base64解密
+func Base64UrlDecode(input string) (string, error) {
+	str, err := base64.URLEncoding.DecodeString(input)
+	if err != nil {
+		return "", err
+	}
+
+	return string(str), nil
+}
+
 // Sha256Encrypt sha256 不加盐
 func Sha256Encrypt(str string) string {
 	hash := sha256.New()
@@ -129,7 +146,7 @@ func Sha256Encrypt(str string) string {
 }
 
 // Sha256SaltEncrypt sha256 加盐加密
-func Sha256SaltEncrypt(str,salt string) string {
+func Sha256SaltEncrypt(str, salt string) string {
 	if salt == "" {
 		salt = "sha-256-salt-encrypt:2023-12-28" //自定义加盐字符串
 	}
@@ -245,4 +262,58 @@ func RsaPrivateKeyDecrypt(str, privateKey string, base64 bool) (decryptStr strin
 
 	decryptStr = string(decryptBytes)
 	return
+}
+
+var chars = "0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz"
+var chars36 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+// EncodeIntTo36 int类型转变为64进制的字符串
+func EncodeIntTo36(num int64) string {
+	var bytes []byte
+	for num > 0 {
+		bytes = append(bytes, chars36[num%36])
+		num = num / 36
+	}
+	reverse(bytes)
+	return string(bytes)
+}
+
+// DecodeIntTo36 字符串转变为int类型的数字
+func Decode36ToInt(str string) int64 {
+	var num int64
+	n := len(str)
+	for i := 0; i < n; i++ {
+		pos := strings.IndexByte(chars36, str[i])
+		num += int64(math.Pow(36, float64(n-i-1)) * float64(pos))
+	}
+	return num
+}
+
+// 字节数组倒叙
+func reverse(a []byte) {
+	for left, right := 0, len(a)-1; left < right; left, right = left+1, right-1 {
+		a[left], a[right] = a[right], a[left]
+	}
+}
+
+// EncodeIntTo64 int类型转变为64进制的字符串
+func EncodeIntTo64(num int64) string {
+	var bytes []byte
+	for num > 0 {
+		bytes = append(bytes, chars[num%64])
+		num = num / 64
+	}
+	reverse(bytes)
+	return string(bytes)
+}
+
+// DecodeIntTo64 字符串转变为int类型的数字
+func Decode64ToInt(str string) int64 {
+	var num int64
+	n := len(str)
+	for i := 0; i < n; i++ {
+		pos := strings.IndexByte(chars, str[i])
+		num += int64(math.Pow(64, float64(n-i-1)) * float64(pos))
+	}
+	return num
 }

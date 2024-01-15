@@ -3,7 +3,6 @@ package create
 import (
 	"log"
 	"testing"
-
 )
 
 func TestCreate(t *testing.T) {
@@ -37,6 +36,15 @@ func TestCreate(t *testing.T) {
 	str := "生成指定随机数字2131321321地方："
 	log.Println("CreateNewStrWithStar:", str, CreateNewStrWithStar(str, ""))
 
+	field := "created_at"
+	format := ""
+	asField := "createdAt"
+	log.Println("CreateDateformatStr:", field, format, asField, CreateDateformatStr(field, format, asField))
+
+	field = "created_at"
+	format = "date"
+	asField = "createdAt"
+	log.Println("CreateDateformatStr:", field, format, asField, CreateDateformatStr(field, format, asField))
 }
 
 func TestExport(t *testing.T) {
@@ -46,7 +54,7 @@ func TestExport(t *testing.T) {
 		{2, "Jane Smith", "jane@example.com"},
 		// 更多数据...
 	}
-	err:= CreateExcelFile("../local_test/export.xlsx", data)
+	err := CreateExcelFile("../local_test/export.xlsx", data)
 	log.Println("CreateExcelFile:", err)
 
 }

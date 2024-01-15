@@ -166,3 +166,14 @@ func CreateExcelFile(fileName string, data [][]interface{}) error {
 	}
 	return nil
 }
+
+// CreateDateformatStr mysql日期格式化
+func CreateDateformatStr(field, format, asField string) (formatStr string) {
+	switch format {
+	case "date":
+		format = "%Y-%m-%d"
+	default:
+		format = "%Y-%m-%d %H:%i:%s"
+	}
+	return "date_format(" + field + ",'" + format + "') as " + asField + " "
+}

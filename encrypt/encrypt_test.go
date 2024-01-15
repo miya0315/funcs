@@ -37,5 +37,8 @@ func TestEncrypt(t *testing.T) {
 	log.Println("Sha256Encrypt: ", Sha256Encrypt(str))
 
 	// Sha256SalfEncrypt
-	log.Println("Sha256SaltEncrypt: ", Sha256SaltEncrypt(str,"Sha256SaltEncrypt"))
+	log.Println("Sha256SaltEncrypt: ", Sha256SaltEncrypt(str, "Sha256SaltEncrypt"))
+
+	// Base64UrlEncode
+	log.Println("Base64UrlEncode: ", Base64UrlEncode(str))
 }
