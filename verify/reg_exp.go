@@ -31,7 +31,7 @@ func RegExpNum(str string, min, max int) bool {
 	return reg.MatchString(str)
 }
 
-// RegExpIsUid 用户名：字母、数字、点、中横线、下划线
+// RegExpIsUid 用户名：字母、数字、点、中横线、下划线 
 func RegExpIsUid(str string, min, max int) bool {
 	resStr := fmt.Sprintf("^[a-zA-Z0-9._\\-]{%d,%d}$", min, max)
 	reg := regexp.MustCompile(resStr)
