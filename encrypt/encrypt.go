@@ -3,6 +3,7 @@ package encrypt
 import (
 	"bytes"
 	"crypto/aes"
+	"crypto/cipher"
 	"crypto/md5"
 	"crypto/rand"
 	"crypto/rsa"
@@ -17,6 +18,70 @@ import (
 	"os"
 	"strings"
 )
+
+// CBCEncrypt CBC模式加密
+func CBCEncrypt(src, key, iv []byte) ([]byte, error) {
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+	//判断加密块的大小
+	blockSize := block.BlockSize()
+	//补充长度，最终补充的长度为blockSize的倍数
+	encryptBytes := pkcs7Padding(src, blockSize)
+	//初始化加密数据接收切片
+	crypted := make([]byte, len(encryptBytes))
+	//使用CBC加密模式
+	mode := cipher.NewCBCEncrypter(block, iv)
+	//执行加密
+	mode.CryptBlocks(crypted, encryptBytes)
+
+	return crypted, nil
+}
+
+// CBCDecrypt CBC模式加密
+func CBCDecrypt(src, key, iv []byte) ([]byte, error) {
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+
+	//初始化解密数据接收切片
+	decrypted := make([]byte, len(src))
+
+	//使用CBC解密模式
+	mode := cipher.NewCBCDecrypter(block, iv)
+
+	//执行解密
+	mode.CryptBlocks(decrypted, src)
+
+	//去除填充
+	decrypted, err = pkcs7UnPadding(decrypted)
+	if err != nil {
+		return nil, err
+	}
+	return decrypted, nil
+}
+
+// pkcs7Padding 填充
+func pkcs7Padding(data []byte, blockSize int) []byte {
+	//判断缺少几位长度。最少1，最多 blockSize
+	padding := blockSize - len(data)%blockSize
+	//补足位数。把切片[]byte{byte(padding)}复制padding个
+	padText := bytes.Repeat([]byte{byte(padding)}, padding)
+	return append(data, padText...)
+}
+
+// pkcs7UnPadding 移除
+func pkcs7UnPadding(data []byte) ([]byte, error) {
+	length := len(data)
+	if length == 0 {
+		return nil, errors.New("加密字符串错误！")
+	}
+	//获取填充的个数
+	unPadding := int(data[length-1])
+	return data[:(length - unPadding)], nil
+}
 
 // ECBDecrypt ECB模式解密
 func ECBDecrypt(crypted, key []byte) ([]byte, error) {

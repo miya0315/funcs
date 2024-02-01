@@ -41,4 +41,13 @@ func TestEncrypt(t *testing.T) {
 
 	// Base64UrlEncode
 	log.Println("Base64UrlEncode: ", Base64UrlEncode(str))
+
+	strByte = []byte("ECBCEncryptWQREwqrewrqre0rew9qr8ew7r  e,,fds,f,afa")
+	key = []byte("Ay4j79B6XlKyOmzVVOsWCh5fUkHNUhav")
+	iv :=[]byte("M033mWWXiCvdg2tq")
+	enStr1, err := CBCEncrypt(strByte, key,iv)
+	log.Println("CBCEncrypt: ", string(strByte), string(enStr1), err)
+
+	enStr1, err = CBCDecrypt(enStr1, key,iv)
+	log.Println("CBCDecrypt: ", string(strByte), string(enStr1), err)
 }
