@@ -4,10 +4,12 @@ import (
 	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/hmac"
 	"crypto/md5"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
+	"crypto/subtle"
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/hex"
@@ -203,23 +205,6 @@ func Base64UrlDecode(input string) (string, error) {
 	return string(str), nil
 }
 
-// Sha256Encrypt sha256 不加盐
-func Sha256Encrypt(str string) string {
-	hash := sha256.New()
-	hash.Write([]byte(str))
-	return hex.EncodeToString(hash.Sum(nil))
-}
-
-// Sha256SaltEncrypt sha256 加盐加密
-func Sha256SaltEncrypt(str, salt string) string {
-	if salt == "" {
-		salt = "sha-256-salt-encrypt:2023-12-28" //自定义加盐字符串
-	}
-	hash := sha256.New()
-	hash.Write([]byte(str + salt))
-	return hex.EncodeToString(hash.Sum(nil))
-}
-
 // GenRsaKey RSA公钥私钥产生 filePaht :./ 需要以 / 结尾
 func GenRsaKey(bits int, filePath string) (private string, public string, err error) {
 
@@ -381,4 +366,54 @@ func Decode64ToInt(str string) int64 {
 		num += int64(math.Pow(64, float64(n-i-1)) * float64(pos))
 	}
 	return num
+}
+
+// Sha256Encrypt sha256 不加盐
+func Sha256Encrypt(str string) string {
+	hash := sha256.New()
+	hash.Write([]byte(str))
+	return hex.EncodeToString(hash.Sum(nil))
+}
+
+// Sha256SaltEncrypt sha256 加盐加密
+func Sha256SaltEncrypt(str, salt string) string {
+	if salt == "" {
+		salt = "sha-256-salt-encrypt:2023-12-28" //自定义加盐字符串
+	}
+	hash := sha256.New()
+	hash.Write([]byte(str + salt))
+	return hex.EncodeToString(hash.Sum(nil))
+}
+
+// RandomBytes 随机长度的字节串
+func RandomBytes(numBytes int) ([]byte, error) {
+	randomBytes := make([]byte, numBytes)
+
+	_, err := rand.Read(randomBytes)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return nil, err
+	}
+
+	return randomBytes, nil
+}
+
+// Hash256Mac 计算 HMAC 值：返回二进制数据
+func Hash256Mac(message, secretKey string) []byte {
+	key := []byte(secretKey)
+	val := []byte(message)
+	h := hmac.New(sha256.New, key)
+	h.Write(val)
+
+	mac := h.Sum(nil)
+	return mac
+}
+
+// HashEquals 比较两个字节序列是否相等
+func HashEquals(a, b []byte) bool {
+	return subtle.ConstantTimeCompare(a, b) == 1
+}
+// ToXString 将字节数据转为16进制数据
+func ToXString(bin []byte) string {
+	return fmt.Sprintf("%x", bin)
 }
